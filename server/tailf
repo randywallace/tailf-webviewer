@@ -1,0 +1,28 @@
+#!/bin/bash
+
+while read line; do
+  echo $line | jq -r '.' >&2
+
+  # Grab file= param
+  FILE=$(echo $line | jq -e -r '.file')
+  if [[ $? != 0 ]]; then FILE='/var/log/hosts/*.log'; fi
+
+  # Grab follow= param (default true, set to false to disable)
+  FOLLOW=$(echo $line | jq -e -r '.follow')
+  if [[ "${FOLLOW}" == "false" ]]; then FOLLOW=''; else FOLLOW='--follow=name --retry'; fi
+
+  # Grab lines= param (default 1)
+  LINES=$(echo $line | jq -e -r '.lines')
+  if [[ $? != 0 ]]; then LINES=1; fi
+
+  # grap exclude= param (regex OK)
+  EXCLUDE=$(echo $line | jq -e -r '.exclude')
+  if [[ $? == 0 ]]; then EXCLUDE="| grep --line-buffered -vE '${EXCLUDE}'"; else EXCLUDE=''; fi
+
+  INCLUDE=$(echo $line | jq -e -r '.include')
+  if [[ $? == 0 ]]; then INCLUDE="| grep --line-buffered -E '${INCLUDE}'"; else INCLUDE=''; fi
+
+  echo "Tailing ${FILE}" >&2
+  echo "tail ${FOLLOW} --pid="${PPID}" -qn ${LINES} ${FILE} ${EXCLUDE} ${INCLUDE} 2>&1" >&2
+  eval "tail ${FOLLOW} --pid="${PPID}" -qn ${LINES} ${FILE} ${EXCLUDE} ${INCLUDE}" 2>&1
+done <&0

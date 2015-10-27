@@ -1,0 +1,25 @@
+.table>tbody>tr>td {
+  padding: 0px;
+  font-family: monospace;
+}
+
+.navbar-nav > li > a, .navbar-brand {
+  padding-top:4px !important;
+  padding-bottom:0 !important;
+  height: 28px;
+}
+
+.navbar {
+  min-height:28px !important;
+  margin-bottom: 0px;
+}
+
+.navbar-text, .navbar-form {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+#max-on-screen, #search{
+  // padding: 0px;
+  height: 20px;
+}
