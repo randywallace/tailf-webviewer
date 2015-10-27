@@ -15,14 +15,26 @@
 
 _enable_syslog=${SYSLOG:-true}
 
-if host syslog > /dev/null 2>&1; then
-  ____links_syslog_host=$(host syslog | head -n 1 | cut -f 4)
-  _host_syslog_daemon="${HOST_SYSLOG_DAEMON:-$____links_syslog_host}"
-else
-  ____gateway_ip=$(ip route | grep default | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
-  _host_syslog_daemon="${HOST_SYSLOG_DAEMON:-$____gateway_ip}"
-fi
-echo "Syslog Daemon Detected: ${_host_syslog_daemon}"
+case $(uname -s) in
+Linux)
+  if host syslog > /dev/null 2>&1; then
+    ____links_syslog_host=$(host syslog | head -n 1 | cut -f 4)
+    _host_syslog_daemon="${HOST_SYSLOG_DAEMON:-$____links_syslog_host}"
+  else
+    ____gateway_ip=$(ip route | grep default | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
+    _host_syslog_daemon="${HOST_SYSLOG_DAEMON:-$____gateway_ip}"
+  fi
+  echo "Syslog Daemon Detected: ${_host_syslog_daemon}"
+;;
+Darwin)
+  echo "Darwin does not currently support syslog!"
+  _enable_syslog=false
+;;
+*)
+  echo "$OPTARG not supported"
+  exit 2
+;;
+esac
 
 _facility="${FACILITY:-user}"
 
@@ -66,18 +78,6 @@ case $(uname -s) in
     exit 2
     ;;
 esac
-
-
-##if which stdbuf > /dev/null 2>&1; then
-##  stdbuf_bin="stdbuf"
-##elif which gstdbuf > /dev/null 2>&1; then
-##  stdbuf_bin="gstdbuf"
-##else
-##  echo "Could not find stdbuf" 1>&2
-##  exit 2
-##fi
-##
-##if which gsed > /dev/null 2>&1; 
 
 __syslog_logger() {
   local LEVEL=${1:-info}
@@ -129,43 +129,3 @@ warn()       { warning "$*"  ; }
 info_stdin() { log_stdin     ; }
 warn_stdin() { warning_stdin ; }
 
-# $1 = file
-# $2 = variant (webapp); unset creates default
-generate_logback_config() {
-  check_data $1
-  local _variant=${2}
-  if ! ${SYSLOG}               ; then _logback_root='<appender-ref ref="STDOUT" />'; fi
-  if ${SYSLOG}                 ; then _logback_root='<appender-ref ref="SYSLOG" />'; fi
-  if ${SYSLOG} && ${TEE_OUTPUT}; then _logback_root='<appender-ref ref="STDOUT" /><appender-ref ref="SYSLOG" />'; fi
-  local _suffix_pattern_addon=
-  case "${_variant}" in
-    webapp)
-      _suffix_pattern_addon=' APP:${CONTEXT_NAME} USER:%X{eds.userid}/%X{eds.emailaddress} RHOST:%X{req.xForwardedFor}/%X{req.remoteHost} URL:%X{req.requestURL}?%X{req.queryString} M:%X{req.method}' 
-      ;;
-    standard)
-      ;;
-    *)
-      ;;
-  esac
-  cat <<EOF > "${1}" || true
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="30 seconds">
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-    </encoder>
-  </appender> 
-  <appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
-    <syslogHost>${_host_syslog_daemon}</syslogHost>
-    <facility>${_facility}</facility>
-    <suffixPattern>${APP_NAME:-unknown}[$$]:${_suffix_pattern_addon} %t/%c{1}: %replace(%msg %rEx{short}){"[\\n\\t]"," "}%nopex</suffixPattern>
-    <stackTracePattern>${APP_NAME:-unknown}[$$]: </stackTracePattern>
-    <throwableExcluded>false</throwableExcluded>
-  </appender>
-  <logger name="com.edatasource.analyst.auth.AuthTokenUtil" level="warn"></logger>
-  <root level="${LOG_LEVEL:-INFO}">
-    ${_logback_root}
-  </root>
-</configuration>
-EOF
-}

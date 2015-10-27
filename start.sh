@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APP_NAME='tailf_server'
-SYSLOG=false
+#SYSLOG=false
 
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 source "${SCRIPT_DIR}/core.sh.lib"

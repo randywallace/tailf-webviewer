@@ -11,7 +11,20 @@ export LANG="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 EXIT_ON_ERR=true
 
-CURDIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+case $(uname -s) in
+  Darwin)
+    if which greadlink > /dev/null 2>&1; then
+      readlink_bin="greadlink"
+    else
+      echo "greadlink not found, install coreutils"
+      exit 2
+    fi
+  ;;
+  Linux)
+    readlink_bin="readlink"
+  ;;
+esac
+CURDIR="$(dirname "$($readlink_bin -f "${BASH_SOURCE[0]}")")"
 source "${CURDIR}/log.sh.lib"
 
 __set_nested_func() { NESTED_FUNCTION="${NESTED_FUNCTION:-${FUNCNAME[2]}}"; }
@@ -27,9 +40,9 @@ __handle_err() {
   __prev_cmd_exit=${__previous_command} __exit_status=${1:-$?}
   __set_nested_func 
   if ${EXIT_ON_ERR}; then
-    crit_die "[${__prev_cmd_exit}] ($(readlink -f "${BASH_SOURCE[1]}"):${BASH_LINENO[0]}) failed with an exit status of ${__exit_status}" 
+    crit_die "[${__prev_cmd_exit}] ($($readlink_bin -f "${BASH_SOURCE[1]}"):${BASH_LINENO[0]}) failed with an exit status of ${__exit_status}" 
   else
-    critical "[${__prev_cmd_exit}] ($(readlink -f "${BASH_SOURCE[1]}"):${BASH_LINENO[0]}) failed with an exit status of ${__exit_status}" 
+    critical "[${__prev_cmd_exit}] ($($readlink_bin -f "${BASH_SOURCE[1]}"):${BASH_LINENO[0]}) failed with an exit status of ${__exit_status}" 
   fi
 }
 
@@ -37,7 +50,7 @@ __handle_exit() {
   __prev_cmd_exit=${__previous_command} __exit_status=${1:-$?}
   if [[ -x $__err_thrown ]]; then
     __set_nested_func 
-    crit_die "[${__prev_cmd_exit}] ($(readlink -f "${BASH_SOURCE[1]}"):${BASH_LINENO[0]}) failed with an exit status of ${__exit_status}" 
+    crit_die "[${__prev_cmd_exit}] ($($readlink_bin -f "${BASH_SOURCE[1]}"):${BASH_LINENO[0]}) failed with an exit status of ${__exit_status}" 
   fi
 }
 
