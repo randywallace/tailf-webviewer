@@ -1,11 +1,14 @@
+'use strict'
+
 var WebSocket = require('reconnectingwebsocket')
 var querystring = require('querystring')
 
-module.exports.tailf = function(cb) {
-	var query = querystring.parse(location.search.slice(1))
+var query = querystring.parse(location.search.slice(1))
 
-	
-  var ws = new WebSocket('ws://' + window.location.href.split('/')[2] + '/tailf', null, {debug: false})
+var host = query.host || window.location.href.split('/')[2]
+
+module.exports.tailf = function(cb) {
+	var ws = new WebSocket('ws://' + host + '/tailf', null, {debug: false})
 
 	ws.onopen = function() {
 		ws.send(JSON.stringify(query))
@@ -20,8 +23,8 @@ module.exports.tailf = function(cb) {
 }
 
 module.exports.logfiles = function(cb) {
-  var ws = new WebSocket('ws://' + window.location.href.split('/')[2] + '/logfiles', null, {debug: false, reconnectInterval: 60000})
-  ws.onmessage = function(message) {
-    cb(message.data)
-  }
+	var ws = new WebSocket('ws://' + host + '/logfiles', null, {debug: false, reconnectInterval: 60000})
+	ws.onmessage = function(message) {
+		cb(message.data)
+	}
 }
