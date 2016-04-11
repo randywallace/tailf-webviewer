@@ -1,115 +1,109 @@
-var RenderRows = require('./render-rows')
-var socket = require('./socket')
-var on = require('dom-event')
+'use strict'
 
-var searchInput = document.getElementById('search')
+const RenderRows = require('./render-rows')
+const createRow = RenderRows.createRow
+const socket = require('./socket')
+const on = require('dom-event')
+const classList = require('class-list')
+const loop = require('frame-loop')
 
-var is_paused = false
+const searchInput = document.getElementById('search')
+const pauseButtonClassList = classList(document.getElementById('pause'))
 
-var maxInMemory = 10000
+const maxInMemory = 10000
 var maxInDom = 100
+const refreshInterval = 250
+const table = document.getElementById('log-table')
 
-var refresh_interval = 50
-
-var lines = []
-var render = RenderRows(document.getElementById('log-table'))
-
-var logfiles = []
-
-var hostnames = []
-
-var programs = []
-
-Array.prototype.pushUnique = function (item){
-    if(this.indexOf(item) == -1) {
-    //if(jQuery.inArray(item, this) == -1) {
-        this.push(item);
-        return true;
-    }
-    return false;
-}
-
-toggle_pause = function() {
-  elem = document.getElementById('pause')
-  if ( elem.classList.contains('active') ) {
-    elem.classList.remove('active')
-    is_paused = false
-  } else {
-    elem.classList.add('active')
-    is_paused = true
-  }
-}
+const lines = []
+const render = RenderRows(table)
+var renderLines = []
+var currentSearchString = ''
 
 socket.tailf(function(line) {
-  // split_line = line.split('|').slice(0,7)
-  // split_line.splice(2,1)
-  // console.log(split_line);
-	if (lines.length === maxInMemory) {
-		var removed = lines.shift()
+	if (lines.length >= maxInMemory) {
+		lines.shift()
 	}
 	lines.push(line)
-  var split_lines = line.split('|')
-  hostnames.pushUnique(split_lines[3])
-  if ( split_lines[4] != undefined && split_lines[4] != "" ) {
-    programs.pushUnique(split_lines[4])
-  }
-  console.log(hostnames)
-  console.log(programs)
-})
 
-//socket.logfiles(function(line) {
-//  console.log('pushing' + line)
-//  elem = document.getElementById('logfile_list')
-//  child = document.createElement('option')
-//  child.value = line
-//  elem.appendChild(child)
-//})
+	if (currentSearchString === '' || lineMatchesSearchString(line)) {
+		renderLines.push(line)
+		if (renderLines.length >= maxInDom) {
+			renderLines.shift()
+		}
+	}
+})
 
 scrollToBottom()
 
-setInterval(function() {
-	var bottom = atBottom()
-	var searchString = searchInput.value
-	var renderLines
-	if (searchString) {
-		renderLines = lines.filter(function(line) {
-			return line.toLowerCase().indexOf(searchString.toLowerCase()) !== -1
-		}).slice(-maxInDom)
+function lineMatchesSearchString(line) {
+	return line.toLowerCase().indexOf(currentSearchString.toLowerCase()) !== -1
+}
+
+function refreshRenderLines() {
+	if (currentSearchString) {
+		renderLines = lines.filter(lineMatchesSearchString).slice(-maxInDom)
 	} else {
 		renderLines = lines.slice(-maxInDom)
 	}
-  if ( is_paused === false ) {
-	  render(renderLines)
-  }
+}
+
+const engine = loop({
+	fps: 10,
+	correction: 0
+}, function() {
+	const bottom = atBottom()
+
+	render(renderLines)
 
 	if (bottom) {
 		scrollToBottom()
 	}
+})
 
-}, refresh_interval)
+engine.run()
+
+engine.on('fps', fps => console.log('actual fps:', fps))
+
+onChange('max-on-screen', function(newValue) {
+	const intValue = parseInt(newValue)
+
+	if (intValue > 0) {
+		maxInDom = intValue
+		refreshRenderLines()
+	}
+})
+
+onChange('search', newValue => {
+	currentSearchString = newValue
+	console.log('currentSearchString is', currentSearchString)
+	refreshRenderLines()
+})
+
+onClick('pause', function() {
+	engine.toggle()
+	pauseButtonClassList.toggle('active')
+})
+
+function onClick(id, cb) {
+	const e = document.getElementById(id)
+	on(e, 'click', cb)
+}
 
 function onChange(id, cb) {
-	var e = document.getElementById(id)
-	on(e, 'change', function(event) {
+	const e = document.getElementById(id)
+	on(e, 'keyup', function(event) {
 		cb(e.value)
 	})
 }
 
-onChange('max-on-screen', function(newValue) {
-	var intValue = parseInt(newValue)
-
-	if (intValue > 0) {
-		maxInDom = intValue
-	}
-})
-
 function scrollToBottom() {
-	var bottom = document.body.scrollHeight - window.innerHeight
+	const bottom = document.body.scrollHeight - window.innerHeight
 	window.scrollTo(0, bottom)
 }
 
 function atBottom() {
-	var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop
-	var bottom = document.body.scrollHeight - window.innerHeight
+	const scrollPosition = document.documentElement.scrollTop || document.body.scrollTop
+	const bottom = document.body.scrollHeight - window.innerHeight
 	return bottom - scrollPosition < 50
 }

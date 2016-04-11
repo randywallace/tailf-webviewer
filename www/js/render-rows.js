@@ -1,23 +1,20 @@
-var h = require('virtual-dom/h')
-var diff = require('virtual-dom/diff')
-var patch = require('virtual-dom/patch')
-var createElement = require('virtual-dom/create-element')
+const yo = require('yo-yo')
 
-var isWarning = /WARNING|NOTICE|ALERT|WARN/
-var isDanger = /EMERG|ERR|SEVERE|ERROR|FATAL/
-var isInfo = /INFO/
+const isWarning = /WARNING|NOTICE|ALERT|WARN/
+const isDanger = /EMERG|ERR|SEVERE|ERROR|FATAL/
+const isInfo = /INFO/
 
 module.exports = function(table) {
-	var currentTree = renderTree([])
-	var rootNode = createElement(currentTree)
+	const rootNode = createTableBody([])
 
 	table.appendChild(rootNode)
 
+	function update(newTableBody) {
+		yo.update(rootNode, newTableBody)
+	}
+
 	return function render(lines) {
-		var newTree = renderTree(lines)
-		var patches = diff(currentTree, newTree)
-		rootNode = patch(rootNode, patches)
-		currentTree = newTree
+		update(createTableBody(lines))
 	}
 }
 
@@ -29,20 +26,26 @@ function getClass(line) {
 	} else if (isInfo.test(line)) {
 		return ''
 	} else {
-    return 'info'
-  }
+		return 'info'
+	}
 }
 
-function renderLineTree(line) {
-	return h('tr', {
-		className: getClass(line)
-	}, [
-		h('td', [
-			line
-		])
-	])
+function createTableBody(logLines) {
+	const rows = logLines.map(createRow)
+	return yo`
+		<tbody>
+			${rows}
+		</tbody>
+	`
 }
 
-function renderTree(logLines) {
-	return h('tbody', logLines.map(renderLineTree))
+function createRow(line) {
+	const rowClass = getClass(line)
+	return yo`
+		<tr class="${rowClass}">
+			<td>
+				${line}
+			</td>
+		</tr>
+	`
 }
