@@ -6,11 +6,11 @@
 .navbar-nav > li > a, .navbar-brand {
   padding-top:4px !important;
   padding-bottom:0 !important;
-  height: 28px;
+  height: 32px;
 }
 
 .navbar {
-  min-height:28px !important;
+  min-height:32px !important;
   margin-bottom: 0px;
 }
 
@@ -21,5 +21,5 @@
 
 #max-on-screen, #search{
   // padding: 0px;
-  height: 20px;
+  height: 36px;
 }

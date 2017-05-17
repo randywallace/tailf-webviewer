@@ -11,7 +11,7 @@ const searchInput = document.getElementById('search')
 const pauseButtonClassList = classList(document.getElementById('pause'))
 
 const maxInMemory = 10000
-var maxInDom = 100
+var maxInDom = 500
 const refreshInterval = 250
 const table = document.getElementById('log-table')
 
