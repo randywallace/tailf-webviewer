@@ -4,6 +4,7 @@
   padding-left: 10px;
   padding-right: 0px;
   font-family: monospace;
+  white-space: nowrap;
 }
 
 .navbar-nav > li > a, .navbar-brand {
@@ -30,4 +31,8 @@
 #main-container {
   position: relative;
   top: 30px;
+}
+
+#log-message {
+  white-space: normal;
 }

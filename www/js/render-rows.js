@@ -63,7 +63,7 @@ function createRow(line) {
 			<td>
 				${line[6]}
 			</td>
-			<td>
+			<td id="log-message">
 				${line[7]}
 			</td>
 		</tr>
