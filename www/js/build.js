@@ -4189,6 +4189,17 @@ onClick('ip', function() {
   refreshRenderLines()
 })
 
+onClick('hostname', function() {
+  classList(document.getElementById('hostname')).toggle('active')
+  classList(document.getElementById('hostname_column')).toggle('hidden')
+  if ( column_visibility.hostname == 'hidden' ) {
+    column_visibility.hostname = ''
+  } else {
+    column_visibility.hostname = 'hidden'
+  }
+  refreshRenderLines()
+})
+
 onClick('pause', function() {
 	engine.toggle()
 	pauseButtonClassList.toggle('active')
@@ -4263,31 +4274,38 @@ function createTableBody(logLines, opts) {
 function createRow(line) {
 	const rowClass = getClass(line)
   line = S(line).parseCSV('|', '', '', '')[0];
-	return yo`
-		<tr class="${rowClass}">
-			<td class="${this.timestamp}">
-				${line[2]}
-			</td>
-			<td class="${this.facility}">
-				${line[0]}
-			</td>
-			<td class="${this.level}">
-				${line[1]}
-			</td>
-			<td class="${this.process}">
-				${line[4]}
-			</td>
-			<td class="${this.pid}">
-				${line[5]}
-			</td>
-			<td class="${this.ip}">
-				${line[6]}
-			</td>
-			<td id="log-message">
-				${line[7]}
-			</td>
-		</tr>
-	`
+  if ( line.length >= 8 ) {
+	  return yo`
+	  	<tr class="${rowClass}">
+	  		<td class="${this.timestamp}">
+	  			${line[2]}
+	  		</td>
+	  		<td class="${this.facility}">
+	  			${line[0]}
+	  		</td>
+	  		<td class="${this.level}">
+	  			${line[1]}
+	  		</td>
+	  		<td class="${this.pid}">
+	  			${line[5]}
+	  		</td>
+        <td class="${this.hostname}">
+          ${line[3]}
+        </td>
+	  		<td class="${this.ip}">
+	  			${line[6]}
+	  		</td>
+	  		<td class="${this.process}">
+	  			${line[4]}
+	  		</td>
+	  		<td id="log-message">
+	  			${line[7]}
+	  		</td>
+	  	</tr>
+	  `
+  } else {
+    return yo``
+  }
 }
 
 },{"string":28,"yo-yo":29}],33:[function(require,module,exports){

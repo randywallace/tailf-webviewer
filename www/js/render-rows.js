@@ -43,29 +43,36 @@ function createTableBody(logLines, opts) {
 function createRow(line) {
 	const rowClass = getClass(line)
   line = S(line).parseCSV('|', '', '', '')[0];
-	return yo`
-		<tr class="${rowClass}">
-			<td class="${this.timestamp}">
-				${line[2]}
-			</td>
-			<td class="${this.facility}">
-				${line[0]}
-			</td>
-			<td class="${this.level}">
-				${line[1]}
-			</td>
-			<td class="${this.process}">
-				${line[4]}
-			</td>
-			<td class="${this.pid}">
-				${line[5]}
-			</td>
-			<td class="${this.ip}">
-				${line[6]}
-			</td>
-			<td id="log-message">
-				${line[7]}
-			</td>
-		</tr>
-	`
+  if ( line.length >= 8 ) {
+	  return yo`
+	  	<tr class="${rowClass}">
+	  		<td class="${this.timestamp}">
+	  			${line[2]}
+	  		</td>
+	  		<td class="${this.facility}">
+	  			${line[0]}
+	  		</td>
+	  		<td class="${this.level}">
+	  			${line[1]}
+	  		</td>
+	  		<td class="${this.pid}">
+	  			${line[5]}
+	  		</td>
+        <td class="${this.hostname}">
+          ${line[3]}
+        </td>
+	  		<td class="${this.ip}">
+	  			${line[6]}
+	  		</td>
+	  		<td class="${this.process}">
+	  			${line[4]}
+	  		</td>
+	  		<td id="log-message">
+	  			${line[7]}
+	  		</td>
+	  	</tr>
+	  `
+  } else {
+    return yo``
+  }
 }

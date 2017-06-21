@@ -150,6 +150,17 @@ onClick('ip', function() {
   refreshRenderLines()
 })
 
+onClick('hostname', function() {
+  classList(document.getElementById('hostname')).toggle('active')
+  classList(document.getElementById('hostname_column')).toggle('hidden')
+  if ( column_visibility.hostname == 'hidden' ) {
+    column_visibility.hostname = ''
+  } else {
+    column_visibility.hostname = 'hidden'
+  }
+  refreshRenderLines()
+})
+
 onClick('pause', function() {
 	engine.toggle()
 	pauseButtonClassList.toggle('active')
