@@ -1,4 +1,5 @@
 const yo = require('yo-yo')
+const S = require('string')
 
 const isWarning = /WARNING|NOTICE|ALERT|WARN/
 const isDanger = /EMERG|ERR|SEVERE|ERROR|FATAL/
@@ -41,10 +42,29 @@ function createTableBody(logLines) {
 
 function createRow(line) {
 	const rowClass = getClass(line)
+  line = S(line).parseCSV('|', '', '', '')[0];
 	return yo`
 		<tr class="${rowClass}">
 			<td>
-				${line}
+				${line[2]}
+			</td>
+			<td>
+				${line[0]}
+			</td>
+			<td>
+				${line[1]}
+			</td>
+			<td>
+				${line[4]}
+			</td>
+			<td>
+				${line[5]}
+			</td>
+			<td>
+				${line[6]}
+			</td>
+			<td>
+				${line[7]}
 			</td>
 		</tr>
 	`

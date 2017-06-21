@@ -1,5 +1,8 @@
 .table>tbody>tr>td {
-  padding: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 10px;
+  padding-right: 0px;
   font-family: monospace;
 }
 
@@ -20,6 +23,11 @@
 }
 
 #max-on-screen, #search{
-  // padding: 0px;
-  height: 36px;
+  padding: 0px 4px;
+  height: 24px;
+}
+
+#main-container {
+  position: relative;
+  top: 30px;
 }

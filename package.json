@@ -15,11 +15,13 @@
     "email": "randy@randywallace.com",
     "url": "http://randywallace.com/"
   },
-  "contributors": [{
-    "name": "TehShrike",
-    "email": "me@JoshDuff.com",
-    "url": "http://joshduff.com"
-  }],
+  "contributors": [
+    {
+      "name": "TehShrike",
+      "email": "me@JoshDuff.com",
+      "url": "http://joshduff.com"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "browserify": "^11.1.0",
@@ -28,6 +30,7 @@
     "ecstatic": "^1.0.0",
     "frame-loop": "^1.2.1",
     "reconnectingwebsocket": "^1.0.0",
+    "string": "^3.3.3",
     "virtual-dom": "^2.1.1",
     "yo-yo": "^1.1.1"
   },
