@@ -4131,6 +4131,7 @@ onClick('timestamp', function() {
   } else {
     column_visibility.timestamp = 'hidden'
   }
+  refreshRenderLines()
 })
 
 onClick('facility', function() {
@@ -4141,6 +4142,7 @@ onClick('facility', function() {
   } else {
     column_visibility.facility = 'hidden'
   }
+  refreshRenderLines()
 })
 
 onClick('level', function() {
@@ -4151,6 +4153,7 @@ onClick('level', function() {
   } else {
     column_visibility.level = 'hidden'
   }
+  refreshRenderLines()
 })
 
 onClick('process', function() {
@@ -4161,6 +4164,7 @@ onClick('process', function() {
   } else {
     column_visibility.process = 'hidden'
   }
+  refreshRenderLines()
 })
 
 onClick('pid', function() {
@@ -4171,6 +4175,7 @@ onClick('pid', function() {
   } else {
     column_visibility.pid = 'hidden'
   }
+  refreshRenderLines()
 })
 
 onClick('ip', function() {
@@ -4181,6 +4186,7 @@ onClick('ip', function() {
   } else {
     column_visibility.ip = 'hidden'
   }
+  refreshRenderLines()
 })
 
 onClick('pause', function() {
