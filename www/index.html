@@ -31,7 +31,14 @@
 						<input type="text" class="form-control" id="search">
 					</div>
 				</form>
-        	<button type="button" class="btn btn-info btn-sm" id="pause">Pause</button>
+        <button type="button" class="btn btn-info btn-sm" id="pause">Pause</button>
+        <button type="button" class="btn btn-info btn-sm" id="timestamp">Toggle Timestamp</button>
+        <button type="button" class="btn btn-info btn-sm" id="facility">Toggle Facility</button>
+        <button type="button" class="btn btn-info btn-sm" id="level">Toggle Level</button>
+        <button type="button" class="btn btn-info btn-sm" id="process">Toggle Process</button>
+        <button type="button" class="btn btn-info btn-sm" id="pid">Toggle PID</button>
+        <button type="button" class="btn btn-info btn-sm" id="ip">Toggle IP</button>
+      </div>
 		</nav>
 		<div class="container-fluid" id="main-container" >
 			<div class="row">
@@ -39,12 +46,12 @@
 					<table class="table" id="log-table">
             <thead>
               <tr>
-                <th>TIMESTAMP</th>
-                <th>FACILITY</th>
-                <th>LEVEL</th>
-                <th>PROCESS</th>
-                <th>PID</th>
-                <th>IP</th>
+                <th id="timestamp_column">TIMESTAMP</th>
+                <th id="facility_column">FACIL</th>
+                <th id="level_column">LVL</th>
+                <th id="process_column">PROC</th>
+                <th id="pid_column">PID</th>
+                <th id="ip_column">IP</th>
                 <th>MESSAGE</th>
               </tr>
             </thead>

@@ -10,6 +10,10 @@ const loop = require('frame-loop')
 const searchInput = document.getElementById('search')
 const pauseButtonClassList = classList(document.getElementById('pause'))
 
+var column_visibility = { timestamp: '' };
+console.log(column_visibility);
+
+
 const maxInMemory = 10000
 var maxInDom = 500
 const refreshInterval = 250
@@ -54,7 +58,7 @@ const engine = loop({
 }, function() {
 	const bottom = atBottom()
 
-	render(renderLines)
+	render(renderLines, column_visibility)
 
 	if (bottom) {
 		scrollToBottom()
@@ -78,6 +82,66 @@ onChange('search', newValue => {
 	currentSearchString = newValue
 	console.log('currentSearchString is', currentSearchString)
 	refreshRenderLines()
+})
+
+onClick('timestamp', function() {
+  classList(document.getElementById('timestamp')).toggle('active')
+  classList(document.getElementById('timestamp_column')).toggle('hidden')
+  if ( column_visibility.timestamp == 'hidden' ) {
+    column_visibility.timestamp = ''
+  } else {
+    column_visibility.timestamp = 'hidden'
+  }
+})
+
+onClick('facility', function() {
+  classList(document.getElementById('facility')).toggle('active')
+  classList(document.getElementById('facility_column')).toggle('hidden')
+  if ( column_visibility.facility == 'hidden' ) {
+    column_visibility.facility = ''
+  } else {
+    column_visibility.facility = 'hidden'
+  }
+})
+
+onClick('level', function() {
+  classList(document.getElementById('level')).toggle('active')
+  classList(document.getElementById('level_column')).toggle('hidden')
+  if ( column_visibility.level == 'hidden' ) {
+    column_visibility.level = ''
+  } else {
+    column_visibility.level = 'hidden'
+  }
+})
+
+onClick('process', function() {
+  classList(document.getElementById('process')).toggle('active')
+  classList(document.getElementById('process_column')).toggle('hidden')
+  if ( column_visibility.process == 'hidden' ) {
+    column_visibility.process = ''
+  } else {
+    column_visibility.process = 'hidden'
+  }
+})
+
+onClick('pid', function() {
+  classList(document.getElementById('pid')).toggle('active')
+  classList(document.getElementById('pid_column')).toggle('hidden')
+  if ( column_visibility.pid == 'hidden' ) {
+    column_visibility.pid = ''
+  } else {
+    column_visibility.pid = 'hidden'
+  }
+})
+
+onClick('ip', function() {
+  classList(document.getElementById('ip')).toggle('active')
+  classList(document.getElementById('ip_column')).toggle('hidden')
+  if ( column_visibility.ip == 'hidden' ) {
+    column_visibility.ip = ''
+  } else {
+    column_visibility.ip = 'hidden'
+  }
 })
 
 onClick('pause', function() {

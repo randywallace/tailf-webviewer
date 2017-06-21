@@ -14,8 +14,8 @@ module.exports = function(table) {
 		yo.update(rootNode, newTableBody)
 	}
 
-	return function render(lines) {
-		update(createTableBody(lines))
+	return function render(lines, opts) {
+		update(createTableBody(lines, opts))
 	}
 }
 
@@ -31,8 +31,8 @@ function getClass(line) {
 	}
 }
 
-function createTableBody(logLines) {
-	const rows = logLines.map(createRow)
+function createTableBody(logLines, opts) {
+	const rows = logLines.map(createRow, opts)
 	return yo`
 		<tbody>
 			${rows}
@@ -45,22 +45,22 @@ function createRow(line) {
   line = S(line).parseCSV('|', '', '', '')[0];
 	return yo`
 		<tr class="${rowClass}">
-			<td>
+			<td class="${this.timestamp}">
 				${line[2]}
 			</td>
-			<td>
+			<td class="${this.facility}">
 				${line[0]}
 			</td>
-			<td>
+			<td class="${this.level}">
 				${line[1]}
 			</td>
-			<td>
+			<td class="${this.process}">
 				${line[4]}
 			</td>
-			<td>
+			<td class="${this.pid}">
 				${line[5]}
 			</td>
-			<td>
+			<td class="${this.ip}">
 				${line[6]}
 			</td>
 			<td id="log-message">
