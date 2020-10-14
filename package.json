@@ -27,7 +27,7 @@
     "browserify": "^11.1.0",
     "class-list": "^0.1.1",
     "dom-event": "0.0.5",
-    "ecstatic": "^1.0.0",
+    "ecstatic": "^4.1.4",
     "frame-loop": "^1.2.1",
     "reconnectingwebsocket": "^1.0.0",
     "string": "^3.3.3",
